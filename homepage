@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <style>
+        body {
+            background-image: url('wpu.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 200px;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: #000000;
+        }
+        h1 {
+            position: relative;
+            z-index: 1;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        h1::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translate(-50%);
+            width: 35%;
+            height: 100%;
+            z-index: -1;
+            background-color: #FFD700;
+            border: 8px solid #FFFFFF;
+            border-radius: 10px;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 100px;
+        }
+
+        .button {
+            display: inline-block;
+            justify-content: center;
+            margin: -50px;
+        }
+
+        #weather-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .weather-card {
+            display: flex;
+            flex-direction: column;
+            border: 8px solid #FFFFFF;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+            background-color: #FFCF00;
+            color: black;
+            border-radius: 10px;
+            width: 35%; /* Adjust width here */
+        }
+
+        /* Capitalize the first letter of description */
+        .weather-card p {
+            text-transform: capitalize;
+        }
+
+        .weather-info-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid black;
+            margin-bottom: 10px; /* Added margin for spacing */
+            width: 98%; /* Adjust width here */
+            height: 90px; /* Adjust height here */
+            border-radius: 10px; /* Rounded corners */
+            padding: 10px; /* Adjust padding for content */
+            box-sizing: border-box;
+        }
+
+        .weather-info-box p {
+            font-size: 17px; /* Adjust font size here */
+            margin: 0;
+        }
+
+        .weather-info-box img {
+            width: 50px; /* Adjust width of the weather icon */
+            height: 50px; /* Adjust height of the weather icon */
+            margin-bottom: 5px; /* Adjust margin for spacing between icon and text */
+        }
+
+        
+        .weather-info-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .weather-info-row .weather-info-box {
+            margin-right: 10px; /* Added margin between boxes */
+        }
+
+        .weather-card img {
+            width: 50px; /* Adjust the width of the icon */
+            height: 50px; /* Adjust the height of the icon */
+            margin-bottom: -10px;
+        }
+        .circle {
+            position: relative;
+            left: 75px;
+            width: 150px;
+            height: 150px;
+            background-color: #FFCF00;
+            border-radius: 50%;
+            border: none;
+        }
+
+        .circle2 {
+            position: relative;
+            top: -47px;
+            left: -69.3px;
+            width: 130px;
+            height: 130px;
+            background-color: #00214D;
+            border-radius: 50%;
+            border: none;
+	        color: white;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            padding-top: 40px;
+        }
+
+        .circle2 img {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px; /* Adjust the width of the image */
+            height: auto;
+            z-index: 1; /* Ensure the image appears on top */
+        }
+    </style>
+
+</head>
+<body>
+
+    <h1>Welcome to William Penn</h1>
+    
+    <div class="button-row">
+        <div class="button">
+            <a href="athletics.html">
+                <button class="circle"></button>
+            </a>
+            <a href="athletics.html">
+                <button class="circle2">
+                    <img src="wpu2.png" alt="Athletics Image">
+                    Athletics
+                </button>
+            </a>
+        </div>
+
+        <div class="button">
+            <a href="calendar.html">
+                <button class="circle"></button>
+            </a>
+            <a href="calendar.html">
+                <button class="circle2">
+                    <img src="wpu2.png" alt="Calendar Image">
+                    Calendar
+                </button>
+            </a>
+        </div>
+
+        <div class="button">
+            <a href="weather.html">
+                <button class="circle"></button>
+            </a>
+            <a href="weather.html">
+                <button class="circle2">
+                    <img src="wpu2.png" alt="Weather Image">
+                    Weather
+                </button>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Weather information box -->
+    <div id="weather-info"></div>
+
+<script>
+    // OpenWeatherMap API key and endpoint
+    const apiKey = '230e6546e176ba740d4347c90927a827';
+    const city = 'Oskaloosa';
+    const state = 'Iowa';
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city},${state}&appid=${apiKey}`;
+
+    // Function to fetch weather data
+    async function getWeatherData() {
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            displayWeatherInfo(data);
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+            document.getElementById('weather-info').innerHTML = 'Error fetching weather data';
+        }
+    }
+
+    // Function to display weather information
+    function displayWeatherInfo(data) {
+            const weatherInfoDiv = document.getElementById('weather-info');
+            const temperatureKelvin = data.main.temp;
+            const temperatureFahrenheit = Math.round((temperatureKelvin - 273.15) * 9/5 + 32);
+            const feelsLikeKelvin = data.main.feels_like;
+            const feelsLikeFahrenheit = Math.round((feelsLikeKelvin - 273.15) * 9/5 + 32);
+            const humidity = data.main.humidity;
+            const description = data.weather[0].description;
+            const weatherIcon = data.weather[0].icon;
+
+            // Check if precipitation is expected based on weather condition
+            const precipitation = data.main.pop;
+
+            // Construct HTML content including weather icon
+            const weatherInfoHTML = `
+                <div class="weather-card first-card">
+                    <div class="weather-info-box">
+                        <p>Date: ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                    <div class="weather-info-row">
+                        <div class="weather-info-box">
+                            <p class="weather-info-label">Temp:</p>
+                            <p class="weather-info-value">${temperatureFahrenheit} &#8457;</p>
+                        </div>
+                        <div class="weather-info-box">
+                            <p class="weather-info-label">Feels Like:</p>
+                            <p class="weather-info-value">${feelsLikeFahrenheit} &#8457;</p>
+                        </div>
+                    </div>
+                    <div class="weather-info-box">
+                        <p class="weather-info-label">Description: </p>
+                        <p>${description}</p>
+                        <img src="http://openweathermap.org/img/wn/${weatherIcon}.png" alt="Weather Icon">
+                    </div>
+                </div>`;
+            weatherInfoDiv.innerHTML = weatherInfoHTML;
+    }
+
+    // Call the function to fetch weather data when the page loads
+    window.onload = getWeatherData;
+    
+    var inactivityTimeLimit = 30000; // 30 seconds
+    var inactivityTimer;
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(redirectToHomepage, inactivityTimeLimit);
+    }
+
+    function redirectToHomepage() {
+        window.location.href = 'index.html';
+    }
+
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('keydown', resetInactivityTimer);
+
+    resetInactivityTimer(); // Initial setup of the inactivity timer
+</script>
+
+</body>
+</html>
